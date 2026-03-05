@@ -1,0 +1,330 @@
+{
+  "storeName": "R. Force Universe",
+  "tagline": "Discover the best Jadibuti from Himalayas",
+  "categories": [
+    {
+      "id": "immunity-wellness",
+      "name": "Immunity & Wellness",
+      "subcategories": [
+        {
+          "id": "daily-immunity",
+          "name": "Daily Immunity Herbs",
+          "products": [
+            {
+              "id": "gurjo",
+              "name": "Gurjo",
+              "scientificName": "Tinospora cordifolia",
+              "priceUSD": 6.95,
+              "packSize": "100g",
+              "image": "/Gurjo_Tinospora cordifolia.png",
+              "description": "Gurjo is a classical Ayurvedic herb traditionally used to support day-to-day immunity, stamina, and recovery. Benefits include immune support, antioxidant protection, and support for metabolic balance.",
+              "benefits": ["Immune support", "Daily vitality", "Antioxidant support"],
+              "source": "Tamaspure Ayurveda / Drmedicart listings",
+              "featured": true
+            },
+            {
+              "id": "tulsi",
+              "name": "Tulsi",
+              "scientificName": "Ocimum tenuiflorum",
+              "priceUSD": 6.49,
+              "packSize": "100g",
+              "image": "/Tulsi_Ocimum tenuiflorum.png",
+              "description": "Tulsi, also known as Holy Basil, is known as the queen of herbs in Ayurveda. Benefits include support for respiratory health, stress response, and natural immune defense.",
+              "benefits": ["Respiratory support", "Stress support", "Immunity support"],
+              "source": "Ayurvedabay Organic Tulsi 100g",
+              "featured": true
+            },
+            {
+              "id": "amla",
+              "name": "Amla",
+              "scientificName": "Emblica officinalis",
+              "priceUSD": 6.49,
+              "packSize": "100g",
+              "image": "/Amla_Emblica officinalis.png",
+              "description": "Amla is naturally rich in vitamin C and is a traditional rasayana for overall rejuvenation. Benefits include skin and hair nourishment, antioxidant support, and immune system support.",
+              "benefits": ["Vitamin C rich", "Skin and hair support", "Rejuvenation"],
+              "source": "Ayurvedabay Organic/Divya Amla 100g",
+              "featured": true
+            },
+            {
+              "id": "neem",
+              "name": "Neem",
+              "scientificName": "Azadirachta indica",
+              "priceUSD": 5.21,
+              "packSize": "100g",
+              "image": "/Neem_Azadirachta indica.png",
+              "description": "Neem is valued for cleansing and purification practices in traditional systems. Benefits include skin clarity support, microbial balance support, and scalp care support.",
+              "benefits": ["Skin support", "Purification support", "Scalp care"],
+              "source": "Pushmycart Neem Powder 100g",
+              "featured": false
+            },
+            {
+              "id": "aloe-vera",
+              "name": "Aloe Vera",
+              "scientificName": "Aloe barbadensis miller",
+              "priceUSD": 11.49,
+              "packSize": "100g",
+              "image": "/Aloe Vera_Aloe barbadensis miller.png",
+              "description": "Aloe Vera is widely used in herbal and cosmetic formulations. Benefits include support for skin hydration, soothing care for irritated skin, and digestive wellness support.",
+              "benefits": ["Skin hydration", "Soothing support", "Digestive comfort"],
+              "source": "Albochem / Gopala Ayurveda listings",
+              "featured": false
+            },
+            {
+              "id": "kapur",
+              "name": "Kapur",
+              "scientificName": "Cinnamomum camphora",
+              "priceUSD": 8.49,
+              "packSize": "100g",
+              "image": "/Kapur_Cinnamomum camphora).png",
+              "description": "Kapur (camphor) is traditionally used in aromatic rituals and herbal preparations. Benefits include refreshing aromatic support, respiratory comfort in aroma use, and cleansing support in traditional practices.",
+              "benefits": ["Aromatic freshness", "Respiratory comfort support", "Traditional cleansing use"],
+              "source": "Specialty herb market listings",
+              "featured": false
+            }
+          ]
+        },
+        {
+          "id": "adaptogens",
+          "name": "Adaptogens & Mind-Body Support",
+          "products": [
+            {
+              "id": "ashwagandha",
+              "name": "Ashwagandha",
+              "scientificName": "Withania somnifera",
+              "priceUSD": 6.99,
+              "packSize": "100g",
+              "image": "/Ashwagandha_Withania somnifera.png",
+              "description": "Ashwagandha is a traditional adaptogenic herb used for stress resilience and strength. Benefits include stress management support, healthy sleep support, and energy and stamina support.",
+              "benefits": ["Stress support", "Energy and stamina", "Sleep quality support"],
+              "source": "Ayurvedabay Ashwagandha Churna 100g",
+              "featured": true
+            },
+            {
+              "id": "brahmi",
+              "name": "Brahmi",
+              "scientificName": "Bacopa monnieri",
+              "priceUSD": 7.49,
+              "packSize": "100g",
+              "image": "/Brahmi _Bacopa monnieri.png",
+              "description": "Brahmi is traditionally used for cognitive clarity and calmness. Benefits include support for memory, concentration, and nervous system relaxation.",
+              "benefits": ["Memory support", "Focus support", "Calm mind support"],
+              "source": "Ayurvedabay/Gopala Brahmi 100g",
+              "featured": true
+            },
+            {
+              "id": "jatamansi",
+              "name": "Jatamansi",
+              "scientificName": "Nardostachys grandiflora",
+              "priceUSD": 11.99,
+              "packSize": "100g",
+              "image": "/Jatamansi _Nardostachys grandiflora.png",
+              "description": "Jatamansi is a Himalayan aromatic root known for grounding and calming properties in traditional use. Benefits include emotional balance support, sleep support, and mental relaxation.",
+              "benefits": ["Calming support", "Sleep support", "Mood balance"],
+              "source": "TrustHerb Jatamansi listings",
+              "featured": false
+            },
+            {
+              "id": "jatamansi-true",
+              "name": "Jatamansi (True)",
+              "scientificName": "Nardostachys jatamansi",
+              "priceUSD": 13.99,
+              "packSize": "100g",
+              "image": "/Jatamansi_Nardostachys jatamansi).png",
+              "description": "Jatamansi (Nardostachys jatamansi) is a classical Himalayan herb used for mind-body calming support. Benefits include support for relaxation, sleep quality, and mental composure.",
+              "benefits": ["Relaxation support", "Sleep quality support", "Mind-body balance"],
+              "source": "Specialty herbal listings",
+              "featured": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "digestive-metabolic",
+      "name": "Digestive & Metabolic Support",
+      "subcategories": [
+        {
+          "id": "spices-and-roots",
+          "name": "Healing Spices & Roots",
+          "products": [
+            {
+              "id": "turmeric",
+              "name": "Turmeric",
+              "scientificName": "Curcuma longa",
+              "priceUSD": 7.5,
+              "packSize": "100g",
+              "image": "/Turmeric_Curcuma longa.png",
+              "description": "Turmeric is a golden spice known for curcumin and antioxidant compounds. Benefits include anti-inflammatory support, joint comfort support, and digestive wellness support.",
+              "benefits": ["Anti-inflammatory support", "Joint comfort", "Digestive wellness"],
+              "source": "Avazera Organic Turmeric 100g",
+              "featured": true
+            },
+            {
+              "id": "ginger",
+              "name": "Ginger",
+              "scientificName": "Zingiber officinale",
+              "priceUSD": 5,
+              "packSize": "100g",
+              "image": "/Ginger_Zingiber officinale.png",
+              "description": "Ginger is a warming root used in both food and wellness traditions. Benefits include digestion support, relief from occasional nausea, and circulatory comfort support.",
+              "benefits": ["Digestive support", "Nausea support", "Warming effect"],
+              "source": "Pushmycart Ginger Powder 100g",
+              "featured": true
+            },
+            {
+              "id": "dalchini",
+              "name": "Dalchini",
+              "scientificName": "Cinnamomum zeylanicum",
+              "priceUSD": 8.95,
+              "packSize": "100g",
+              "image": "/Dalchini_Cinnamomum zeylanicum.png",
+              "description": "Dalchini (true cinnamon) is a fragrant bark spice used for culinary and wellness purposes. Benefits include antioxidant intake, digestive support, and metabolic wellness support.",
+              "benefits": ["Antioxidant support", "Digestive comfort", "Metabolic support"],
+              "source": "Pushmycart / Ceylon Cinnamon listings",
+              "featured": false
+            },
+            {
+              "id": "pipla",
+              "name": "Pipla",
+              "scientificName": "Piper longum",
+              "priceUSD": 17.49,
+              "packSize": "100g",
+              "image": "/Pipla_ Piper Longum.png",
+              "description": "Pipla (long pepper) is used in Ayurveda for respiratory and digestive formulations. Benefits include support for digestion, respiratory comfort, and bioavailability support in blends.",
+              "benefits": ["Respiratory support", "Digestive support", "Bioavailability support"],
+              "source": "Box2Buy Pippali 100g",
+              "featured": false
+            },
+            {
+              "id": "lemongrass",
+              "name": "Lemongrass",
+              "scientificName": "Cymbopogon citratus",
+              "priceUSD": 9.5,
+              "packSize": "100g",
+              "image": "/Lemongrass_Cymbopogon citratus.png",
+              "description": "Lemongrass offers a citrus aroma and is used in tea and wellness routines. Benefits include digestive ease, antioxidant support, and calming refreshment.",
+              "benefits": ["Digestive ease", "Calming tea herb", "Antioxidant support"],
+              "source": "Pushmycart / JSP Herbs listings",
+              "featured": false
+            },
+            {
+              "id": "kachur",
+              "name": "Kachur",
+              "scientificName": "Curcuma zedoaria",
+              "priceUSD": 8.99,
+              "packSize": "100g",
+              "image": "/Kachur_Curcuma zedoaria).png",
+              "description": "Kachur (white turmeric) is a fragrant rhizome used in traditional digestive and wellness formulations. Benefits include digestive comfort support, antioxidant support, and traditional skin-friendly herbal use.",
+              "benefits": ["Digestive comfort", "Antioxidant support", "Traditional skin support"],
+              "source": "Ayurvedic spice market listings",
+              "featured": false
+            }
+          ]
+        },
+        {
+          "id": "detox-herbs",
+          "name": "Detox & Liver Support Herbs",
+          "products": [
+            {
+              "id": "chiraito",
+              "name": "Chiraito",
+              "scientificName": "Swertia chirayita",
+              "priceUSD": 7.99,
+              "packSize": "100g",
+              "image": "/Chiraito_Swertia chirayita.png",
+              "description": "Chiraito is a bitter Himalayan herb traditionally used for detox and digestive support. Benefits include liver support, appetite support, and internal cleansing support.",
+              "benefits": ["Liver support", "Digestive support", "Detox support"],
+              "source": "Ayurvedabay Chirayita 100g",
+              "featured": false
+            },
+            {
+              "id": "kutki",
+              "name": "Kutki",
+              "scientificName": "Picrorhiza kurroa",
+              "priceUSD": 12.99,
+              "packSize": "100g",
+              "image": "/Kutki _Picrorhiza kurroa.png",
+              "description": "Kutki is a prized Himalayan herb commonly associated with liver and digestive wellness. Benefits include liver function support, digestive support, and metabolic balance support.",
+              "benefits": ["Liver support", "Digestive support", "Metabolic balance"],
+              "source": "Ayurvedabay Kutki 100g",
+              "featured": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rare-himalayan",
+      "name": "Rare Himalayan Botanicals",
+      "subcategories": [
+        {
+          "id": "high-altitude",
+          "name": "High-Altitude Herbs",
+          "products": [
+            {
+              "id": "yarsagumba",
+              "name": "Yarsagumba",
+              "scientificName": "Cordyceps sinensis",
+              "priceUSD": 399,
+              "packSize": "10g",
+              "image": "/Yarsagumba_Cordyceps sinensis.png",
+              "description": "Yarsagumba (Cordyceps sinensis) is a rare high-altitude Himalayan fungus-herb complex. Benefits traditionally include stamina support, respiratory vitality support, and recovery support.",
+              "benefits": ["Stamina support", "Respiratory vitality", "Recovery support"],
+              "source": "Bhutan Cordycep / Weee market listings",
+              "featured": true
+            },
+            {
+              "id": "satuwa",
+              "name": "Satuwa",
+              "scientificName": "Paris polyphylla",
+              "priceUSD": 24.99,
+              "packSize": "100g",
+              "image": "/Satuwa_Paris polyphylla.png",
+              "description": "Satuwa (Paris polyphylla) is a Himalayan botanical used in traditional regional practices. Benefits are traditionally associated with wellness support and restorative herbal formulations.",
+              "benefits": ["Traditional restorative use", "Herbal wellness blends", "Regional Himalayan herb"],
+              "source": "Market reference (specialty herb listings)",
+              "featured": false
+            },
+            {
+              "id": "panch-aule",
+              "name": "Panch Aule",
+              "scientificName": "Dactylorhiza hatagirea",
+              "priceUSD": 34.99,
+              "packSize": "100g",
+              "image": "/Panch Aule _Dactylorhiza hatagirea .png",
+              "description": "Panch Aule is a high-altitude orchid herb known in traditional mountain herbal knowledge. Benefits are traditionally described for vitality support and restorative tonic preparations.",
+              "benefits": ["Vitality support", "Traditional tonic use", "Rare mountain herb"],
+              "source": "Classic Derma / eBay market listings",
+              "featured": false
+            },
+            {
+              "id": "loth-salla",
+              "name": "Loth Salla",
+              "scientificName": "Taxus wallichiana",
+              "priceUSD": 29.99,
+              "packSize": "100g",
+              "image": "/Loth salla_Taxus wallichiana.png",
+              "description": "Loth Salla (Himalayan yew) is a conservation-sensitive Himalayan tree species used in traditional botanical contexts. Benefits are described in traditional literature; sourcing should prioritize legal and sustainable supply.",
+              "benefits": ["Traditional botanical use", "Specialty herb", "Conservation-aware sourcing"],
+              "source": "Market reference (specialty/limited listings)",
+              "featured": false
+            },
+            {
+              "id": "rudraksha",
+              "name": "Rudraksha",
+              "scientificName": "Elaeocarpus ganitrus",
+              "priceUSD": 19.99,
+              "packSize": "100g",
+              "image": "/Rudraksha_Elaeocarpus ganitrus).png",
+              "description": "Rudraksha is traditionally valued in Himalayan spiritual and wellness practices. Benefits are associated with grounding support, calmness, and use in traditional lifestyle routines.",
+              "benefits": ["Grounding support", "Calmness support", "Traditional wellness use"],
+              "source": "Specialty botanical market listings",
+              "featured": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
