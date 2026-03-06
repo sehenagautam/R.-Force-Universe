@@ -236,6 +236,23 @@ export default function App() {
     setSessionEmail(null);
   };
 
+  const handleCheckoutToWhatsApp = () => {
+    if (detailedCart.length === 0) return;
+
+    const lines = detailedCart.map(
+      ({ product, quantity, lineTotal }) =>
+        `- ${product.name} x${quantity} = $${lineTotal.toFixed(2)}`
+    );
+    const message = [
+      "Hi, I want to place an order for these jadibuti products:",
+      ...lines,
+      `Total: $${cartTotal.toFixed(2)}`
+    ].join("\n");
+
+    const whatsappUrl = `https://wa.me/${CONTACT_PHONE_RAW}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+  };
+
   const openHomeAndScroll = (sectionId: "home-top" | "featured-products" | "categories-section") => {
     setActivePage("home");
     setSelectedProductId(null);
@@ -678,7 +695,10 @@ export default function App() {
                     <span>Total</span>
                     <span>${cartTotal.toFixed(2)}</span>
                   </div>
-                  <button className="mb-2 w-full rounded-xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-sky-700">
+                  <button
+                    onClick={handleCheckoutToWhatsApp}
+                    className="mb-2 w-full rounded-xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-sky-700"
+                  >
                     Proceed to Checkout
                   </button>
                   <button
