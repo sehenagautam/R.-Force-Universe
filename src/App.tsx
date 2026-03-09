@@ -62,11 +62,6 @@ function saveStoredSession(email: string | null) {
   localStorage.removeItem("rforce_session_email");
 }
 
-function toOptimizedSource(src: string) {
-  if (!src.endsWith(".png")) return src;
-  return src.replace(/^\/(.+)\.png$/, "/optimized/$1.jpg");
-}
-
 export default function App() {
   const CONTACT_PHONE_DISPLAY = "+977 9851406494";
   const CONTACT_PHONE_RAW = "9779851406494";
@@ -799,20 +794,13 @@ function SmartProductImage({
   className: string;
   loading: "lazy" | "eager";
 }) {
-  const [displaySrc, setDisplaySrc] = useState(encodeURI(toOptimizedSource(src)));
+  const [displaySrc, setDisplaySrc] = useState(encodeURI(src));
   const [didTrim, setDidTrim] = useState(false);
 
   useEffect(() => {
-    setDisplaySrc(encodeURI(toOptimizedSource(src)));
+    setDisplaySrc(encodeURI(src));
     setDidTrim(false);
   }, [src]);
-
-  const handleError = () => {
-    const fallback = encodeURI(src);
-    if (displaySrc !== fallback) {
-      setDisplaySrc(fallback);
-    }
-  };
 
   const handleLoad = (event: SyntheticEvent<HTMLImageElement>) => {
     if (didTrim) return;
@@ -932,7 +920,6 @@ function SmartProductImage({
       className={className}
       loading={loading}
       decoding="async"
-      onError={handleError}
       onLoad={handleLoad}
     />
   );
