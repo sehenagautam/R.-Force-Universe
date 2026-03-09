@@ -17,12 +17,6 @@ type CartItem = {
   quantity: number;
 };
 
-type StoredUser = {
-  name: string;
-  email: string;
-  password: string;
-};
-
 function flattenProducts(data: Catalog): EnrichedProduct[] {
   return data.categories.flatMap((category) =>
     category.subcategories.flatMap((subcategory) =>
@@ -35,31 +29,6 @@ function flattenProducts(data: Catalog): EnrichedProduct[] {
       }))
     )
   );
-}
-
-function getStoredUsers(): StoredUser[] {
-  try {
-    const raw = localStorage.getItem("rforce_users");
-    return raw ? (JSON.parse(raw) as StoredUser[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveStoredUsers(users: StoredUser[]) {
-  localStorage.setItem("rforce_users", JSON.stringify(users));
-}
-
-function getStoredSession(): string | null {
-  return localStorage.getItem("rforce_session_email");
-}
-
-function saveStoredSession(email: string | null) {
-  if (email) {
-    localStorage.setItem("rforce_session_email", email);
-    return;
-  }
-  localStorage.removeItem("rforce_session_email");
 }
 
 export default function App() {
@@ -75,24 +44,11 @@ export default function App() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  const [authMode, setAuthMode] = useState<"login" | "signup" | null>(null);
-  const [authError, setAuthError] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const [sessionEmail, setSessionEmail] = useState<string | null>(() => getStoredSession());
-
   const allProducts = useMemo(() => flattenProducts(catalog), []);
   const productById = useMemo(
     () => new Map(allProducts.map((product) => [product.id, product])),
     [allProducts]
   );
-
-  const currentUser = useMemo(() => {
-    if (!sessionEmail) return null;
-    return getStoredUsers().find((user) => user.email === sessionEmail) ?? null;
-  }, [sessionEmail]);
 
   const subcategoryOptions = useMemo(() => {
     if (activeCategory === "all") {
@@ -173,63 +129,6 @@ export default function App() {
   };
 
   const clearCart = () => setCartItems([]);
-
-  const closeAuth = () => {
-    setAuthMode(null);
-    setAuthError("");
-    setName("");
-    setEmail("");
-    setPassword("");
-  };
-
-  const handleSignup = () => {
-    setAuthError("");
-    if (!name.trim() || !email.trim() || password.length < 6) {
-      setAuthError("Enter name, valid email, and password (min 6 characters).");
-      return;
-    }
-
-    const users = getStoredUsers();
-    const exists = users.some((user) => user.email.toLowerCase() === email.toLowerCase());
-    if (exists) {
-      setAuthError("This email is already registered. Please login.");
-      return;
-    }
-
-    const newUser: StoredUser = {
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
-      password
-    };
-
-    saveStoredUsers([...users, newUser]);
-    saveStoredSession(newUser.email);
-    setSessionEmail(newUser.email);
-    closeAuth();
-  };
-
-  const handleLogin = () => {
-    setAuthError("");
-    const user = getStoredUsers().find(
-      (candidate) =>
-        candidate.email.toLowerCase() === email.trim().toLowerCase() &&
-        candidate.password === password
-    );
-
-    if (!user) {
-      setAuthError("Invalid email or password.");
-      return;
-    }
-
-    saveStoredSession(user.email);
-    setSessionEmail(user.email);
-    closeAuth();
-  };
-
-  const logout = () => {
-    saveStoredSession(null);
-    setSessionEmail(null);
-  };
 
   const handleCheckoutToWhatsApp = () => {
     if (detailedCart.length === 0) return;
@@ -332,33 +231,6 @@ export default function App() {
                 </span>
               )}
             </button>
-
-            {currentUser ? (
-              <>
-                <span className="hidden text-sm font-semibold md:inline">Hi, {currentUser.name}</span>
-                <button
-                  className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold transition hover:bg-slate-50"
-                  onClick={logout}
-                >
-                  Logout
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  className="hidden rounded-xl px-3 py-2 text-lg font-semibold transition hover:bg-slate-100 md:block"
-                  onClick={() => setAuthMode("login")}
-                >
-                  Login
-                </button>
-                <button
-                  className="rounded-xl bg-sky-600 px-4 py-2 text-lg font-semibold text-white transition hover:bg-sky-700"
-                  onClick={() => setAuthMode("signup")}
-                >
-                  Sign Up
-                </button>
-              </>
-            )}
           </div>
         </nav>
       </header>
@@ -709,76 +581,6 @@ export default function App() {
         </div>
       )}
 
-      {authMode && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
-          <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_20px_60px_rgba(2,6,23,0.25)]">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-2xl font-bold text-slate-900">{authMode === "login" ? "Login" : "Create Account"}</h3>
-              <button
-                onClick={closeAuth}
-                className="rounded-full border border-slate-200 p-2 transition hover:bg-slate-100"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            {authMode === "signup" && (
-              <label className="mb-3 block">
-                <span className="mb-1 block text-sm font-medium text-slate-700">Full Name</span>
-                <input
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none ring-sky-400 focus:ring-2"
-                  placeholder="Your full name"
-                />
-              </label>
-            )}
-
-            <label className="mb-3 block">
-              <span className="mb-1 block text-sm font-medium text-slate-700">Email</span>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none ring-sky-400 focus:ring-2"
-                placeholder="you@example.com"
-              />
-            </label>
-
-            <label className="mb-4 block">
-              <span className="mb-1 block text-sm font-medium text-slate-700">Password</span>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none ring-sky-400 focus:ring-2"
-                placeholder="******"
-              />
-            </label>
-
-            {authError && <p className="mb-3 text-sm font-medium text-red-600">{authError}</p>}
-
-            <button
-              onClick={authMode === "login" ? handleLogin : handleSignup}
-              className="w-full rounded-xl bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-sky-700"
-            >
-              {authMode === "login" ? "Login" : "Sign Up"}
-            </button>
-
-            <button
-              onClick={() => {
-                setAuthError("");
-                setAuthMode(authMode === "login" ? "signup" : "login");
-              }}
-              className="mt-3 w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-            >
-              {authMode === "login"
-                ? "Need an account? Sign up"
-                : "Already have an account? Login"}
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
