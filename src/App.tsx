@@ -7,8 +7,6 @@ import type { Catalog, Product } from "./types";
 const SITE_URL = "https://rforce.vercel.app";
 const CONTACT_PHONE_DISPLAY = "+977 9851406494";
 const CONTACT_PHONE_RAW = "9779851406494";
-const DISCORD_WEBHOOK_URL =
-  "https://discord.com/api/webhooks/1481302061302812714/UmgGeB8d5dku73oOGfradhWA9qtQelMzFAzc4v3sLMYS6QIyMRhFzSPiK8eg_U_uq_2X";
 
 const catalog = catalogJson as Catalog;
 
@@ -624,70 +622,8 @@ function CartPage({
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
   const [notes, setNotes] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitMessage, setSubmitMessage] = useState("");
-  const [submitError, setSubmitError] = useState("");
 
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
-
-  const handlePlaceOrder = async () => {
-    if (!customerName.trim() || !phone.trim() || !address.trim() || items.length === 0) {
-      setSubmitError("Please fill required fields and add at least one item.");
-      setSubmitMessage("");
-      return;
-    }
-
-    const orderLines = items
-      .map(
-        ({ product, quantity, lineTotal }) =>
-          `${product.name} x${quantity} = $${lineTotal.toFixed(2)}`
-      )
-      .join("\n");
-
-    const payload = {
-      username: "R. Force Bot",
-      content: "New front-end cart checkout request",
-      embeds: [
-        {
-          title: "New Order",
-          color: 0x0ea5e9,
-          fields: [
-            { name: "Customer Name", value: customerName.trim(), inline: false },
-            { name: "Phone Number", value: phone.trim(), inline: false },
-            { name: "Email", value: email.trim() || "N/A", inline: false },
-            { name: "Address", value: address.trim(), inline: false },
-            { name: "Total Items", value: String(itemCount), inline: true },
-            { name: "Subtotal", value: `$${total.toFixed(2)}`, inline: true },
-            { name: "Order Items", value: orderLines || "N/A", inline: false },
-            { name: "Notes", value: notes.trim() || "N/A", inline: false }
-          ],
-          timestamp: new Date().toISOString()
-        }
-      ]
-    };
-
-    try {
-      setIsSubmitting(true);
-      setSubmitError("");
-      setSubmitMessage("");
-
-      const response = await fetch(DISCORD_WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed with status ${response.status}`);
-      }
-
-      setSubmitMessage("Order sent successfully.");
-    } catch {
-      setSubmitError("Failed to send order. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <>
@@ -784,14 +720,14 @@ function CartPage({
           </div>
 
           <button
-            onClick={handlePlaceOrder}
-            disabled={items.length === 0 || isSubmitting}
+            disabled
             className="mt-5 w-full rounded-xl bg-sky-600 px-4 py-3 text-lg font-semibold text-white hover:bg-sky-700 disabled:cursor-not-allowed disabled:bg-slate-300"
           >
-            {isSubmitting ? "Sending..." : "Place Order"}
+            Place Order
           </button>
-          {submitMessage && <p className="mt-2 text-xs text-emerald-700">{submitMessage}</p>}
-          {submitError && <p className="mt-2 text-xs text-red-600">{submitError}</p>}
+          <p className="mt-2 text-xs text-slate-500">
+            Checkout submission is temporarily disabled.
+          </p>
         </div>
       </section>
     </>
