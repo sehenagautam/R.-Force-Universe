@@ -7,6 +7,8 @@ import type { Catalog, Product } from "./types";
 const SITE_URL = "https://rforce.vercel.app";
 const CONTACT_PHONE_DISPLAY = "+977 9851406494";
 const CONTACT_PHONE_RAW = "9779851406494";
+const DISCORD_WEBHOOK_URL =
+  "https://discord.com/api/webhooks/1481302061302812714/UmgGeB8d5dku73oOGfradhWA9qtQelMzFAzc4v3sLMYS6QIyMRhFzSPiK8eg_U_uq_2X";
 
 const catalog = catalogJson as Catalog;
 
@@ -111,7 +113,6 @@ export default function App() {
   );
 
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const detailedCart = cartItems
     .map((item) => {
@@ -127,6 +128,10 @@ export default function App() {
 
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const cartTotal = detailedCart.reduce((sum, item) => sum + item.lineTotal, 0);
+  const cartQtyById = useMemo(
+    () => new Map(cartItems.map((item) => [item.productId, item.quantity])),
+    [cartItems]
+  );
 
   const addToCart = (productId: string) => {
     setCartItems((prev) => {
@@ -140,7 +145,6 @@ export default function App() {
       }
       return [...prev, { productId, quantity: 1 }];
     });
-    setIsCartOpen(true);
   };
 
   const updateQty = (productId: string, nextQty: number) => {
@@ -154,40 +158,44 @@ export default function App() {
 
   const clearCart = () => setCartItems([]);
 
-  const handleCheckoutToWhatsApp = () => {
-    if (detailedCart.length === 0) return;
-
-    const lines = detailedCart.map(
-      ({ product, quantity, lineTotal }) =>
-        `- ${product.name} x${quantity} = $${lineTotal.toFixed(2)}`
-    );
-    const message = [
-      "Hi, I want to place an order for these jadibuti products:",
-      ...lines,
-      `Total: $${cartTotal.toFixed(2)}`
-    ].join("\n");
-
-    const whatsappUrl = `https://wa.me/${CONTACT_PHONE_RAW}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-  };
-
   return (
     <div className="min-h-screen bg-slate-200 text-slate-900">
-      <Header cartCount={cartCount} onOpenCart={() => setIsCartOpen(true)} />
+      <Header cartCount={cartCount} />
 
       <main className="mx-auto w-full max-w-7xl px-4 py-10 md:px-8 md:py-14">
         <Routes>
           <Route
             path="/"
-            element={<HomePage allProducts={allProducts} onAddToCart={addToCart} />}
+            element={
+              <HomePage
+                allProducts={allProducts}
+                cartQtyById={cartQtyById}
+                onAddToCart={addToCart}
+                onUpdateQty={updateQty}
+              />
+            }
           />
           <Route
             path="/products"
-            element={<ProductsPage allProducts={allProducts} onAddToCart={addToCart} />}
+            element={
+              <ProductsPage
+                allProducts={allProducts}
+                cartQtyById={cartQtyById}
+                onAddToCart={addToCart}
+                onUpdateQty={updateQty}
+              />
+            }
           />
           <Route
             path="/categories"
-            element={<CategoriesPage allProducts={allProducts} onAddToCart={addToCart} />}
+            element={
+              <CategoriesPage
+                allProducts={allProducts}
+                cartQtyById={cartQtyById}
+                onAddToCart={addToCart}
+                onUpdateQty={updateQty}
+              />
+            }
           />
           <Route
             path="/product/:productId"
@@ -207,27 +215,27 @@ export default function App() {
               />
             }
           />
+          <Route
+            path="/cart"
+            element={
+              <CartPage
+                items={detailedCart}
+                total={cartTotal}
+                onUpdateQty={updateQty}
+                onClear={clearCart}
+              />
+            }
+          />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
 
       <Footer />
-
-      {isCartOpen && (
-        <CartDrawer
-          items={detailedCart}
-          total={cartTotal}
-          onClose={() => setIsCartOpen(false)}
-          onUpdateQty={updateQty}
-          onClear={clearCart}
-          onCheckout={handleCheckoutToWhatsApp}
-        />
-      )}
     </div>
   );
 }
 
-function Header({ cartCount, onOpenCart }: { cartCount: number; onOpenCart: () => void }) {
+function Header({ cartCount }: { cartCount: number }) {
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     `transition hover:text-slate-900 ${isActive ? "text-sky-700" : "text-slate-700"}`;
 
@@ -261,9 +269,9 @@ function Header({ cartCount, onOpenCart }: { cartCount: number; onOpenCart: () =
           </li>
         </ul>
 
-        <button
+        <Link
+          to="/cart"
           aria-label="Open cart"
-          onClick={onOpenCart}
           className="relative rounded-lg p-2 transition hover:bg-slate-100"
         >
           <ShoppingCart size={26} />
@@ -272,7 +280,7 @@ function Header({ cartCount, onOpenCart }: { cartCount: number; onOpenCart: () =
               {cartCount}
             </span>
           )}
-        </button>
+        </Link>
       </nav>
     </header>
   );
@@ -280,9 +288,13 @@ function Header({ cartCount, onOpenCart }: { cartCount: number; onOpenCart: () =
 
 function HomePage({
   allProducts,
+  cartQtyById,
+  onUpdateQty,
   onAddToCart
 }: {
   allProducts: EnrichedProduct[];
+  cartQtyById: Map<string, number>;
+  onUpdateQty: (productId: string, nextQty: number) => void;
   onAddToCart: (productId: string) => void;
 }) {
   const featured = allProducts.filter((p) => p.featured).slice(0, 4);
@@ -291,7 +303,7 @@ function HomePage({
     <>
       <SeoMeta
         title="R. Force Universe | Himalayan Jadibuti Store"
-        description="Discover authentic Himalayan jadibuti products with benefits, categories, and fast WhatsApp checkout."
+        description="Discover authentic Himalayan jadibuti products with benefits, categories, and easy front-end checkout."
         path="/"
         jsonLd={[
           {
@@ -349,7 +361,14 @@ function HomePage({
 
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
           {featured.map((product) => (
-            <ProductCard key={product.id} product={product} compact onAddToCart={onAddToCart} />
+            <ProductCard
+              key={product.id}
+              product={product}
+              compact
+              cartQty={cartQtyById.get(product.id) ?? 0}
+              onUpdateQty={onUpdateQty}
+              onAddToCart={onAddToCart}
+            />
           ))}
         </div>
       </section>
@@ -359,9 +378,13 @@ function HomePage({
 
 function ProductsPage({
   allProducts,
+  cartQtyById,
+  onUpdateQty,
   onAddToCart
 }: {
   allProducts: EnrichedProduct[];
+  cartQtyById: Map<string, number>;
+  onUpdateQty: (productId: string, nextQty: number) => void;
   onAddToCart: (productId: string) => void;
 }) {
   const featured = allProducts.filter((p) => p.featured).slice(0, 4);
@@ -370,7 +393,7 @@ function ProductsPage({
     <>
       <SeoMeta
         title="Products | R. Force Universe Jadibuti Store"
-        description="Browse all Himalayan jadibuti products by category, subcategory, and benefits with instant WhatsApp checkout."
+        description="Browse all Himalayan jadibuti products by category, subcategory, and benefits."
         path="/products"
       />
 
@@ -378,21 +401,37 @@ function ProductsPage({
         <h1 className="text-4xl font-bold text-slate-900 md:text-5xl">Featured Products</h1>
         <div className="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
           {featured.map((product) => (
-            <ProductCard key={product.id} product={product} compact onAddToCart={onAddToCart} />
+            <ProductCard
+              key={product.id}
+              product={product}
+              compact
+              cartQty={cartQtyById.get(product.id) ?? 0}
+              onUpdateQty={onUpdateQty}
+              onAddToCart={onAddToCart}
+            />
           ))}
         </div>
       </section>
 
-      <CatalogSection allProducts={allProducts} onAddToCart={onAddToCart} />
+      <CatalogSection
+        allProducts={allProducts}
+        cartQtyById={cartQtyById}
+        onAddToCart={onAddToCart}
+        onUpdateQty={onUpdateQty}
+      />
     </>
   );
 }
 
 function CategoriesPage({
   allProducts,
+  cartQtyById,
+  onUpdateQty,
   onAddToCart
 }: {
   allProducts: EnrichedProduct[];
+  cartQtyById: Map<string, number>;
+  onUpdateQty: (productId: string, nextQty: number) => void;
   onAddToCart: (productId: string) => void;
 }) {
   return (
@@ -415,7 +454,12 @@ function CategoriesPage({
         </div>
       </section>
 
-      <CatalogSection allProducts={allProducts} onAddToCart={onAddToCart} />
+      <CatalogSection
+        allProducts={allProducts}
+        cartQtyById={cartQtyById}
+        onAddToCart={onAddToCart}
+        onUpdateQty={onUpdateQty}
+      />
     </>
   );
 }
@@ -564,11 +608,205 @@ function ContactPage({
   );
 }
 
+function CartPage({
+  items,
+  total,
+  onUpdateQty,
+  onClear
+}: {
+  items: { product: EnrichedProduct; quantity: number; lineTotal: number }[];
+  total: number;
+  onUpdateQty: (productId: string, nextQty: number) => void;
+  onClear: () => void;
+}) {
+  const [customerName, setCustomerName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [notes, setNotes] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState("");
+  const [submitError, setSubmitError] = useState("");
+
+  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+
+  const handlePlaceOrder = async () => {
+    if (!customerName.trim() || !phone.trim() || !address.trim() || items.length === 0) {
+      setSubmitError("Please fill required fields and add at least one item.");
+      setSubmitMessage("");
+      return;
+    }
+
+    const orderLines = items
+      .map(
+        ({ product, quantity, lineTotal }) =>
+          `${product.name} x${quantity} = $${lineTotal.toFixed(2)}`
+      )
+      .join("\n");
+
+    const payload = {
+      username: "R. Force Bot",
+      content: "New front-end cart checkout request",
+      embeds: [
+        {
+          title: "New Order",
+          color: 0x0ea5e9,
+          fields: [
+            { name: "Customer Name", value: customerName.trim(), inline: false },
+            { name: "Phone Number", value: phone.trim(), inline: false },
+            { name: "Email", value: email.trim() || "N/A", inline: false },
+            { name: "Address", value: address.trim(), inline: false },
+            { name: "Total Items", value: String(itemCount), inline: true },
+            { name: "Subtotal", value: `$${total.toFixed(2)}`, inline: true },
+            { name: "Order Items", value: orderLines || "N/A", inline: false },
+            { name: "Notes", value: notes.trim() || "N/A", inline: false }
+          ],
+          timestamp: new Date().toISOString()
+        }
+      ]
+    };
+
+    try {
+      setIsSubmitting(true);
+      setSubmitError("");
+      setSubmitMessage("");
+
+      const response = await fetch(DISCORD_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed with status ${response.status}`);
+      }
+
+      setSubmitMessage("Order sent successfully.");
+    } catch {
+      setSubmitError("Failed to send order. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <>
+      <SeoMeta
+        title="Cart | R. Force Universe Jadibuti Store"
+        description="Review your cart and place your jadibuti order with checkout details."
+        path="/cart"
+      />
+
+      <section className="grid gap-6 lg:grid-cols-5">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 lg:col-span-3">
+          <h1 className="mb-4 text-3xl font-bold text-slate-900">Your Cart</h1>
+          {items.length === 0 ? (
+            <p className="text-lg text-slate-600">Your cart is currently empty.</p>
+          ) : (
+            <div className="space-y-4">
+              {items.map(({ product, quantity, lineTotal }) => (
+                <div key={product.id} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-lg font-semibold text-slate-800">{product.name}</p>
+                      <p className="text-sm text-slate-500">{product.packSize}</p>
+                      <p className="text-sm text-slate-500">${product.priceUSD.toFixed(2)} each</p>
+                    </div>
+                    <p className="text-lg font-bold text-sky-700">${lineTotal.toFixed(2)}</p>
+                  </div>
+                  <div className="mt-3 flex items-center gap-3">
+                    <button
+                      className="rounded-lg border border-slate-300 p-1.5 hover:bg-slate-100"
+                      onClick={() => onUpdateQty(product.id, quantity - 1)}
+                    >
+                      <Minus size={14} />
+                    </button>
+                    <span className="w-6 text-center text-sm font-semibold">{quantity}</span>
+                    <button
+                      className="rounded-lg border border-slate-300 p-1.5 hover:bg-slate-100"
+                      onClick={() => onUpdateQty(product.id, quantity + 1)}
+                    >
+                      <Plus size={14} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+
+              <button
+                onClick={onClear}
+                className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+              >
+                Clear Cart
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 lg:col-span-2">
+          <h2 className="text-3xl font-semibold text-slate-900">Checkout Details</h2>
+          <p className="mt-3 text-lg font-semibold text-slate-700">
+            Total ({itemCount} items): ${total.toFixed(2)}
+          </p>
+
+          <div className="mt-5 space-y-3">
+            <input
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
+              placeholder="Customer Name *"
+              className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-base outline-none ring-sky-400 focus:ring-2"
+            />
+            <input
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Phone Number *"
+              className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-base outline-none ring-sky-400 focus:ring-2"
+            />
+            <input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email (optional)"
+              className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-base outline-none ring-sky-400 focus:ring-2"
+            />
+            <textarea
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder="Delivery Address *"
+              rows={3}
+              className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-base outline-none ring-sky-400 focus:ring-2"
+            />
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Notes (optional)"
+              rows={3}
+              className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-base outline-none ring-sky-400 focus:ring-2"
+            />
+          </div>
+
+          <button
+            onClick={handlePlaceOrder}
+            disabled={items.length === 0 || isSubmitting}
+            className="mt-5 w-full rounded-xl bg-sky-600 px-4 py-3 text-lg font-semibold text-white hover:bg-sky-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+          >
+            {isSubmitting ? "Sending..." : "Place Order"}
+          </button>
+          {submitMessage && <p className="mt-2 text-xs text-emerald-700">{submitMessage}</p>}
+          {submitError && <p className="mt-2 text-xs text-red-600">{submitError}</p>}
+        </div>
+      </section>
+    </>
+  );
+}
+
 function CatalogSection({
   allProducts,
+  cartQtyById,
+  onUpdateQty,
   onAddToCart
 }: {
   allProducts: EnrichedProduct[];
+  cartQtyById: Map<string, number>;
+  onUpdateQty: (productId: string, nextQty: number) => void;
   onAddToCart: (productId: string) => void;
 }) {
   const [query, setQuery] = useState("");
@@ -671,7 +909,13 @@ function CatalogSection({
 
       <div className="mt-7 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {filteredProducts.map((product) => (
-          <ProductCard key={product.id} product={product} onAddToCart={onAddToCart} />
+          <ProductCard
+            key={product.id}
+            product={product}
+            cartQty={cartQtyById.get(product.id) ?? 0}
+            onUpdateQty={onUpdateQty}
+            onAddToCart={onAddToCart}
+          />
         ))}
       </div>
 
@@ -687,10 +931,14 @@ function CatalogSection({
 function ProductCard({
   product,
   compact,
+  cartQty,
+  onUpdateQty,
   onAddToCart
 }: {
   product: EnrichedProduct;
   compact?: boolean;
+  cartQty: number;
+  onUpdateQty: (productId: string, nextQty: number) => void;
   onAddToCart: (productId: string) => void;
 }) {
   return (
@@ -738,108 +986,45 @@ function ProductCard({
           </div>
         )}
 
-        <div className="flex items-center justify-end gap-3 border-t border-slate-100 pt-3">
-          <button
-            onClick={() => onAddToCart(product.id)}
-            className="rounded-lg bg-sky-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-sky-700"
-          >
-            Add to Cart
-          </button>
-        </div>
-      </div>
-    </article>
-  );
-}
-
-function CartDrawer({
-  items,
-  total,
-  onClose,
-  onUpdateQty,
-  onClear,
-  onCheckout
-}: {
-  items: { product: EnrichedProduct; quantity: number; lineTotal: number }[];
-  total: number;
-  onClose: () => void;
-  onUpdateQty: (productId: string, nextQty: number) => void;
-  onClear: () => void;
-  onCheckout: () => void;
-}) {
-  return (
-    <div className="fixed inset-0 z-50 flex bg-slate-900/40" onClick={onClose}>
-      <aside
-        className="ml-auto h-full w-full max-w-lg overflow-y-auto border-l border-slate-200 bg-white p-6 shadow-2xl"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <div className="mb-6 flex items-center justify-between">
-          <h3 className="text-2xl font-bold text-slate-900">Your Cart</h3>
-          <button
-            onClick={onClose}
-            className="rounded-full border border-slate-200 p-2 transition hover:bg-slate-100"
-          >
-            <X size={18} />
-          </button>
-        </div>
-
-        {items.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-sm text-slate-500">
-            Your cart is empty.
-          </p>
+        {cartQty <= 0 ? (
+          <div className="flex items-center justify-end gap-3 border-t border-slate-100 pt-3">
+            <button
+              onClick={() => onAddToCart(product.id)}
+              className="rounded-lg bg-sky-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-sky-700"
+            >
+              Add to Cart
+            </button>
+          </div>
         ) : (
-          <>
-            <div className="space-y-4">
-              {items.map(({ product, quantity, lineTotal }) => (
-                <div key={product.id} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="font-semibold text-slate-800">{product.name}</p>
-                      <p className="text-xs text-slate-500">{product.packSize}</p>
-                      <p className="text-xs text-slate-500">${product.priceUSD.toFixed(2)} each</p>
-                    </div>
-                    <p className="font-bold text-sky-700">${lineTotal.toFixed(2)}</p>
-                  </div>
-                  <div className="mt-3 flex items-center gap-3">
-                    <button
-                      className="rounded-lg border border-slate-300 p-1.5 hover:bg-slate-100"
-                      onClick={() => onUpdateQty(product.id, quantity - 1)}
-                    >
-                      <Minus size={14} />
-                    </button>
-                    <span className="w-6 text-center text-sm font-semibold">{quantity}</span>
-                    <button
-                      className="rounded-lg border border-slate-300 p-1.5 hover:bg-slate-100"
-                      onClick={() => onUpdateQty(product.id, quantity + 1)}
-                    >
-                      <Plus size={14} />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-6 border-t border-slate-200 pt-4">
-              <div className="mb-4 flex items-center justify-between text-base font-bold text-slate-800">
-                <span>Total</span>
-                <span>${total.toFixed(2)}</span>
+          <div className="space-y-3 rounded-xl border border-sky-100 bg-sky-50 p-3">
+            <p className="text-sm font-semibold text-sky-800">{cartQty} item in cart</p>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                onClick={() => onUpdateQty(product.id, cartQty - 1)}
+                className="rounded-lg bg-white px-3 py-2 text-xl font-bold text-sky-700 shadow-sm border border-sky-200"
+              >
+                -
+              </button>
+              <div className="flex items-center justify-center rounded-lg bg-white text-lg font-semibold text-sky-700 border border-sky-200">
+                {cartQty}
               </div>
               <button
-                onClick={onCheckout}
-                className="mb-2 w-full rounded-xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-sky-700"
+                onClick={() => onUpdateQty(product.id, cartQty + 1)}
+                className="rounded-lg bg-sky-600 px-3 py-2 text-xl font-bold text-white hover:bg-sky-700"
               >
-                Proceed to Checkout
-              </button>
-              <button
-                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-                onClick={onClear}
-              >
-                Clear Cart
+                +
               </button>
             </div>
-          </>
+            <Link
+              to="/cart"
+              className="block rounded-lg bg-sky-700 px-3 py-2 text-center text-sm font-semibold text-white hover:bg-sky-800"
+            >
+              Proceed to Checkout
+            </Link>
+          </div>
         )}
-      </aside>
-    </div>
+      </div>
+    </article>
   );
 }
 
@@ -858,6 +1043,7 @@ function Footer() {
             <li><Link to="/products" className="transition hover:text-slate-900">Products</Link></li>
             <li><Link to="/categories" className="transition hover:text-slate-900">Categories</Link></li>
             <li><Link to="/products" className="transition hover:text-slate-900">Search</Link></li>
+            <li><Link to="/cart" className="transition hover:text-slate-900">Cart</Link></li>
           </ul>
         </div>
         <div>
