@@ -990,9 +990,19 @@ function Footer() {
           </p>
         </div>
       </div>
-      <p className="border-t border-slate-100 py-4 text-center text-xs text-slate-500">
-        © {new Date().getFullYear()} R. Force Universe. All rights reserved.
-      </p>
+      <div className="border-t border-slate-100 px-4 py-4 md:px-8">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between text-xs text-slate-500">
+          <p>© {new Date().getFullYear()} R. Force Universe. All rights reserved.</p>
+          <a
+            href="https://sajedar.com"
+            target="_blank"
+            rel="nofollow noopener noreferrer"
+            className="hover:text-slate-700"
+          >
+            Powered by sajedar.com
+          </a>
+        </div>
+      </div>
     </footer>
   );
 }
