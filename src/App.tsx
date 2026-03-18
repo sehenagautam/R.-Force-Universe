@@ -995,8 +995,6 @@ function Footer() {
           <p>© {new Date().getFullYear()} R. Force Universe. All rights reserved.</p>
           <a
             href="https://sajedar.com"
-            target="_blank"
-            rel="nofollow noopener noreferrer"
             className="hover:text-slate-700"
           >
             Powered by sajedar.com
